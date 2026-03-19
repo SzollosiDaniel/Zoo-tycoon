@@ -51,7 +51,7 @@ namespace Zoo_tycoon
         {
             MenuBarBorder.Width = 450;
             Button builds = new Button() { Height = 60, Width = 135, Background = Brushes.DeepSkyBlue, Content = "Builds", FontSize = 20 };
-            builds.Click += ShowBuilds;
+            builds.Click += ShowAnimals;
             MenuBar.Children.Add(builds);
             Grid.SetColumn(builds, 0);
             Button AnimalsStat = new Button() { Height = 60, Width = 135, Background = Brushes.DeepSkyBlue, Content = "Shop", FontSize = 20 };
@@ -61,8 +61,8 @@ namespace Zoo_tycoon
             MenuBar.Children.Add(ZooStat);
             Grid.SetColumn(ZooStat, 2);
         }
-
-        private void ShowBuilds(object sender, RoutedEventArgs e)
+        //Animals-Images-Placement
+        private void ShowAnimals(object sender, RoutedEventArgs e)
         {
             List<DockPanel> Dockpanels = new List<DockPanel>();
             int margin = 10;
@@ -151,7 +151,7 @@ namespace Zoo_tycoon
         }
         public void placeAnimal(object sender, MouseButtonEventArgs args)
         {
-
+            Border border = new Border() { BorderBrush = Brushes.Gray, BorderThickness = new Thickness(2)};
 
             Image image = new Image() { Width = MouseTrackingRectangle.Width, Height = MouseTrackingRectangle.Height,
                 Source = new BitmapImage(new Uri($"Images/Animals/{selectedAnimal.Type}.png", UriKind.Relative)) };

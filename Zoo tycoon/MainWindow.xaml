@@ -41,7 +41,7 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Builds" FontSize="20" Click="ShowBuilds" Grid.Column="0"/>
+                    <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Animals" FontSize="20" Grid.Column="0"/>
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Shops" FontSize="20" Grid.Column="1"/>
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Stats" FontSize="20" Grid.Column="3"/>
                 </Grid>
