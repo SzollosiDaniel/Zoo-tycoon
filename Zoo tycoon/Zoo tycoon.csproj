@@ -10,6 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\Animals\Bird.png" />
+    <None Remove="Images\Animals\Crocodile.png" />
+    <None Remove="Images\Animals\Dinosaur.png" />
+    <None Remove="Images\Animals\Dragon.png" />
+    <None Remove="Images\Animals\Elephant.png" />
+    <None Remove="Images\Animals\Mammoth.png" />
+    <None Remove="Images\Animals\Monkey.png" />
+    <None Remove="Images\Animals\Rhino.png" />
+    <None Remove="Images\Animals\Shark.png" />
+    <None Remove="Images\Animals\Snake.png" />
     <None Remove="Images\Bird.png" />
     <None Remove="Images\Crocodile.png" />
     <None Remove="Images\customer.png" />
@@ -21,59 +31,40 @@
     <None Remove="Images\Monkey.png" />
     <None Remove="Images\moon.png" />
     <None Remove="Images\Rhino.png" />
-    <None Remove="Images\Road.png" />
     <None Remove="Images\Shark.png" />
     <None Remove="Images\Snake.png" />
     <None Remove="Images\sun.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Images\Bird.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Crocodile.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Dinosaur.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Dragon.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Mammoth.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Monkey.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Rhino.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Shark.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Images\Snake.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Images\customer.png">
+    <Resource Include="Images\Animals\Bird.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Images\Elephant.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Images\money.png">
+    <Resource Include="Images\Animals\Crocodile.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Images\moon.png">
+    <Resource Include="Images\Animals\Dinosaur.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Images\Road.png">
+    <Resource Include="Images\Animals\Dragon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Resource Include="Images\sun.png">
+    </Resource>
+    <Resource Include="Images\Animals\Elephant.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Animals\Mammoth.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Animals\Monkey.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Animals\Rhino.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Animals\Shark.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\Animals\Snake.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

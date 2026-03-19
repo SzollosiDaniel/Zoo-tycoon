@@ -82,9 +82,7 @@ namespace Zoo_tycoon
             {
                 double temp = index / 3;
                 Button button = new() {Width = 140, Height = 60, Background = Brushes.Transparent, BorderThickness = new Thickness(0,0,0,0), Name = $"{item.Type}"};
-                Image image = new Image() { };
-                BitmapSource bitmap = new BitmapImage(new Uri(item.ImageURL, UriKind.Relative));
-                image.Source = bitmap;
+                Image image = new Image() { Source = new BitmapImage(new Uri($"Images/Animals/{item.Type}.png", UriKind.Relative))};
                 button.Content = image;
                 button.MouseEnter += ShowAnimalsPrice;
                 button.MouseLeave += (sender, args) => { MainGameCanvas.Children.Remove(PriceTag); };
@@ -159,7 +157,7 @@ namespace Zoo_tycoon
             double snappedX = col * cellWidth;
             double snappedY = row * cellHeight;
 
-            Image image = new Image() { Width = cellWidth * 2, Height = cellHeight * 2, Source = new BitmapImage(new Uri(selectedAnimal.ImageURL, UriKind.Relative)) };
+            Image image = new Image() { Width = cellWidth * 2, Height = cellHeight * 2, Source = new BitmapImage(new Uri($"Images/Animals/{selectedAnimal.Type}.png", UriKind.Relative)) };
 
             MainGameCanvas.Children.Add(image);
             Canvas.SetLeft(image, snappedX);
@@ -172,7 +170,7 @@ namespace Zoo_tycoon
                     MainGameGrid.Children.RemoveAt(i);
                 }
             }
-            OpenMenuBar();
+            MouseTrackingRectangle.Visibility = Visibility.Hidden;
         }
     }
 }

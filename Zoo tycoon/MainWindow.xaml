@@ -14,12 +14,12 @@
         <Border BorderThickness="5px" BorderBrush="Black" CornerRadius="10"  Height="75" Width="1600">
             <Canvas Background="SaddleBrown">
                 <TextBlock Width="auto" Margin="0,10,0,0" Height="auto" Text="Zoo name" FontSize="30" Foreground="White"/>
-                <Image Source="/Images/customer.png" Height="40" Margin="350,13,0,0"/>
+                <Image Source="/Images/MenuIcons/customer.png" Height="40" Margin="350,13,0,0"/>
                 <TextBlock Width="auto" Margin="400,20,0,0" Height="auto" Text="Customers" FontSize="22" Foreground="White"/>
-                <Image Source="/Images/money.png" Margin="750,16,0,0" Height="40"/>
+                <Image Source="/Images/MenuIcons/money.png" Margin="750,16,0,0" Height="40"/>
                 <TextBlock Width="auto" Margin="800,20,0,0" Height="auto" Text="Money" FontSize="22" Foreground="LightGreen"/>
                 <TextBlock Width="auto" Margin="1400,20,0,0" Height="auto" Text="time" FontSize="22" Foreground="White"/>
-                <Image Source="/Images/sun.png" Height="40" Margin="1350,15,0,0"/>
+                <Image Source="/Images/MenuIcons/sun.png" Height="40" Margin="1350,15,0,0"/>
             </Canvas>
         </Border>
         <Grid Grid.Row="1">
