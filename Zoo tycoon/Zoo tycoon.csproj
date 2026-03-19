@@ -27,6 +27,10 @@
     <None Remove="Images\Dragon.png" />
     <None Remove="Images\Elephant.png" />
     <None Remove="Images\Mammoth.png" />
+    <None Remove="Images\MenuIcons\customer.png" />
+    <None Remove="Images\MenuIcons\money.png" />
+    <None Remove="Images\MenuIcons\moon.png" />
+    <None Remove="Images\MenuIcons\sun.png" />
     <None Remove="Images\money.png" />
     <None Remove="Images\Monkey.png" />
     <None Remove="Images\moon.png" />
@@ -65,6 +69,18 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Images\Animals\Snake.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MenuIcons\customer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MenuIcons\money.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MenuIcons\moon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\MenuIcons\sun.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

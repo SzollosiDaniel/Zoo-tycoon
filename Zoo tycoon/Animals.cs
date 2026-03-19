@@ -1,8 +1,10 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Zoo_tycoon
 {
@@ -14,6 +16,7 @@ namespace Zoo_tycoon
         public int SellPrice { get; set; } //Buy price * 0.62
         public int Count { get; set; } //0
         public bool Active { get; set; }
+        public Point cords { get; set; }
 
         public Animals(string[] data)
         {
@@ -24,6 +27,7 @@ namespace Zoo_tycoon
             SellPrice = Convert.ToInt32(Math.Round(price * 0.62, 0));
             Count = 0;
             Active = false;
+            cords = new Point(0,0);
         }
     }
 }

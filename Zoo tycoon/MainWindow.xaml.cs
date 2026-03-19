@@ -25,6 +25,7 @@ namespace Zoo_tycoon
         bool buildConfirmed;
         Animals selectedAnimal;
         Point CursorCords;
+        List<Animals> PlacedAnimals;
         public MainWindow()
         {
             InitializeComponent();
@@ -124,44 +125,45 @@ namespace Zoo_tycoon
       
         public void mouseTrackerSnap(object sender, MouseEventArgs args)
         {
-            CursorCords = args.GetPosition(MainGameGrid);
-
             MouseTrackingRectangle.Visibility = Visibility.Visible;
             MouseTrackingRectangle.Width = MainGameGrid.ActualWidth / 39 * 2;
             MouseTrackingRectangle.Height = MainGameGrid.ActualHeight / 30 * 2;
 
-            double cellWidth = MainGameGrid.ActualWidth / 39;
-            double cellHeight = MainGameGrid.ActualHeight / 30;
+            Point cursorPosition = CursorPositionConvert(args.GetPosition(MainGameGrid));
 
-            int col = (int)(CursorCords.X / cellWidth);
-            int row = (int)(CursorCords.Y / cellHeight);
-
-            double snappedX = col * cellWidth;
-            double snappedY = row * cellHeight;
-
-            Canvas.SetLeft(MouseTrackingRectangle, snappedX);
-            Canvas.SetTop(MouseTrackingRectangle, snappedY);
+            Canvas.SetLeft(MouseTrackingRectangle, cursorPosition.X);
+            Canvas.SetTop(MouseTrackingRectangle, cursorPosition.Y);
 
 
         }
-        public void placeAnimal(object sender, MouseButtonEventArgs args)
+        public Point CursorPositionConvert(Point cursorCords)
         {
-            Point pos = args.GetPosition(MainGameGrid);
-
             double cellWidth = MainGameGrid.ActualWidth / 39;
             double cellHeight = MainGameGrid.ActualHeight / 30;
 
-            int col = (int)(pos.X / cellWidth);
-            int row = (int)(pos.Y / cellHeight);
+            int col = (int)(cursorCords.X / cellWidth);
+            int row = (int)(cursorCords.Y / cellHeight);
 
             double snappedX = col * cellWidth;
             double snappedY = row * cellHeight;
 
-            Image image = new Image() { Width = cellWidth * 2, Height = cellHeight * 2, Source = new BitmapImage(new Uri($"Images/Animals/{selectedAnimal.Type}.png", UriKind.Relative)) };
+            return new Point(snappedX, snappedY);
+        }
+        public void placeAnimal(object sender, MouseButtonEventArgs args)
+        {
+
+
+            Image image = new Image() { Width = MouseTrackingRectangle.Width, Height = MouseTrackingRectangle.Height,
+                Source = new BitmapImage(new Uri($"Images/Animals/{selectedAnimal.Type}.png", UriKind.Relative)) };
 
             MainGameCanvas.Children.Add(image);
-            Canvas.SetLeft(image, snappedX);
-            Canvas.SetTop(image, snappedY);
+
+            Point cursorPosition = CursorPositionConvert(args.GetPosition(MainGameGrid));
+            Canvas.SetLeft(image, cursorPosition.X);
+            Canvas.SetTop(image, cursorPosition.Y);
+
+            selectedAnimal.cords = cursorPosition;
+            PlacedAnimals.Add(selectedAnimal);
 
             for (int i = MainGameGrid.Children.Count - 1; i >= 0; i--)
             {
