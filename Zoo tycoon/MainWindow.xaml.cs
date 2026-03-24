@@ -25,6 +25,8 @@ namespace Zoo_tycoon
         Animals selectedAnimal;
         Point CursorCords;
         List<Animals> PlacedAnimals = new List<Animals>();
+        List<Road> PlacedRoads = new List<Road>();
+
         int[,] Placements = new int[30, 43];
         DispatcherTimer GameTime = new DispatcherTimer();
         TimeSpan DayTime = new();
@@ -53,7 +55,7 @@ namespace Zoo_tycoon
             {
                 for (int j = 17; j <= 25; j++)
                 {
-                    Placements[i, j] = 2;
+                    Placements[i, j] = 10;
                 }
             }
             DayTime += TimeSpan.FromHours(6);
@@ -137,7 +139,11 @@ namespace Zoo_tycoon
             bool canPlace;
             if (isRoad)
             {
-                canPlace = Placements[pos.row, pos.col] == 0 || Placements[pos.row, pos.col] == 2;
+                canPlace = Placements[pos.row, pos.col] == 0 ||
+                           Placements[pos.row, pos.col] == 2 ||
+                           Placements[pos.row, pos.col] == 10 ||
+                           Placements[pos.row, pos.col] == 3;
+
             }
             else
             {
@@ -257,20 +263,78 @@ namespace Zoo_tycoon
         {
             if (MouseTrackingRectangle.Fill == Brushes.LightGray)
             {
-                Rectangle rectangle = new Rectangle() { Fill = Brushes.DarkGray, Width = MouseTrackingRectangle.Width, Height = MouseTrackingRectangle.Height };
+                
+
+                var pos = CursorPositionConvert(args.GetPosition(MainGameGrid));
+
+                if (Placements[pos.row, pos.col] == 3)
+                    return;
+
+                Placements[pos.row, pos.col] = 2;
+
+                if (pos.row == 29 && pos.col >= 17 && pos.col <= 25)
+                {
+                    Placements[pos.row, pos.col] = 3;
+                }
+
+                ConvertConnectedRoadsTo4();
+
+                PlacedRoads.Add(new Road(pos.point));
+
+                TextBlock rectangle = new TextBlock() { Background = Brushes.DarkGray, Width = MouseTrackingRectangle.Width, Height = MouseTrackingRectangle.Height, Text = $"{Placements[pos.row, pos.col]}"};
 
                 MainGameCanvas.Children.Add(rectangle);
+                Canvas.SetLeft(rectangle, pos.point.X);
+                Canvas.SetTop(rectangle, pos.point.Y);
 
-                var cursorPositions = CursorPositionConvert(args.GetPosition(MainGameGrid));
-
-
-                Canvas.SetLeft(rectangle, cursorPositions.point.X);
-                Canvas.SetTop(rectangle, cursorPositions.point.Y);
-                Placements[cursorPositions.row, cursorPositions.col] = 1;
-                MessageBox.Show(cursorPositions.row.ToString() + ", " + cursorPositions.col.ToString());
+                
             }
-
         }
+        
+        
+        public void ConvertConnectedRoadsTo4()
+        {
+            bool changed = true;
+
+            while (changed)
+            {
+                changed = false;
+
+                for (int i = 0; i < 30; i++)
+                {
+                    for (int j = 0; j < 43; j++)
+                    {
+                        if (Placements[i, j] == 2)
+                        {
+                            if (i + 1 < 30 && Placements[i + 1, j] == 3)
+                            {
+                                Placements[i, j] = 3;
+                                changed = true;
+                            }
+
+                            else if (i - 1 >= 0 && Placements[i - 1, j] == 3)
+                            {
+                                Placements[i, j] = 3;
+                                changed = true;
+                            }
+
+                            else if (j + 1 < 43 && Placements[i, j + 1] == 3)
+                            {
+                                Placements[i, j] = 3;
+                                changed = true;
+                            }
+
+                            else if (j - 1 >= 0 && Placements[i, j - 1] == 3)
+                            {
+                                Placements[i, j] = 3;
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public void cancelRoadPlacement(object sender, EventArgs args)
         {
             MainGameGrid.MouseMove -= mouseTrackerSnap;
@@ -294,13 +358,14 @@ namespace Zoo_tycoon
             button.Content = "Road";
             button.Background = Brushes.LightBlue;
         }
-        public async void GameLoop (object sender, EventArgs args)
+
+        public async void GameLoop(object sender, EventArgs args)
         {
             DayTime += TimeSpan.FromMinutes(1);
             TimeBlock.Text = $"{DayTime.Hours}:{DayTime.Minutes}";
             if (DayTime.Hours >= 24)
                 DayTime = TimeSpan.FromHours(0);
-           
+
 
             TimeBlock.Text = $"{DayTime.Hours}:{DayTime.Minutes}";
             if (DayTime.Hours >= 6 && DayTime.Hours < 18)
@@ -336,3 +401,4 @@ namespace Zoo_tycoon
         }
     }
 }
+
