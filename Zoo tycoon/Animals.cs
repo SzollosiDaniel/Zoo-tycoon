@@ -11,23 +11,24 @@ namespace Zoo_tycoon
     internal class Animals
     {
         public string Type { get; set; }
-        public string Popularity { get; set; }
+        public int Popularity { get; set; }
         public int BuyPrice { get; set; }
         public int SellPrice { get; set; } //Buy price * 0.62
         public int Count { get; set; } //0
         public bool Active { get; set; }
-        public Point cords { get; set; }
-
+        public Point Cords { get; set; }
+        public int[] RowCol { get; set; }
         public Animals(string[] data)
         {
             Type = data[0];
-            Popularity = data[1];
+            Popularity = Convert.ToInt32(data[1]);
             int.TryParse(data[2], out int price);
             BuyPrice = price;
             SellPrice = Convert.ToInt32(Math.Round(price * 0.62, 0));
             Count = 0;
             Active = false;
-            cords = new Point(0,0);
+            Cords = new Point(0,0);
+            RowCol = [0, 0];
         }
     }
 }

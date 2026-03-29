@@ -24,13 +24,18 @@ namespace Zoo_tycoon
         bool isRoad;
         Animals selectedAnimal;
         Point CursorCords;
-        List<Animals> PlacedAnimals = new List<Animals>();
-        List<Road> PlacedRoads = new List<Road>();
-
+        Dictionary<(int, int), Animals> PlacedAnimals = new();
+        List<Road> PlacedRoads = new();
+        int costumers = new();
         int[,] Placements = new int[30, 43];
-        DispatcherTimer GameTime = new DispatcherTimer();
+        DispatcherTimer GameTime = new();
         TimeSpan DayTime = new();
+        DispatcherTimer gameLoop = new();
+        TimeSpan gameLoopTime = new();
+        Random rnd = new();
         double SunPos;
+        int money = new();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -61,8 +66,14 @@ namespace Zoo_tycoon
             DayTime += TimeSpan.FromHours(6);
 
             GameTime.Interval = TimeSpan.FromSeconds(0.5);
-            GameTime.Tick += GameLoop;
+            GameTime.Tick += TimeLoop;
             GameTime.Start();
+
+            gameLoop.Interval = TimeSpan.FromSeconds(7);
+            gameLoop.Tick += GameLoop;
+            gameLoop.Start();
+
+            money = 500;
         }
 
         //Animals-Images-Placement
@@ -107,6 +118,7 @@ namespace Zoo_tycoon
         }
         public void AnimalOnClick(object sender, EventArgs args)
         {
+            cancelRoadPlacement(RoadButton, new RoutedEventArgs());
             isRoad = false;
             Button button = sender as Button;
             selectedAnimal = animals.Find(a => a.Type == button.Name);
@@ -125,6 +137,8 @@ namespace Zoo_tycoon
             MainGameGrid.MouseMove += mouseTrackerSnap;
             MainGameCanvas.MouseLeftButtonUp += placeAnimal;
             MainGameCanvas.MouseLeftButtonUp -= placeRoad;
+
+            
         }
       
         public void mouseTrackerSnap(object sender, MouseEventArgs args)
@@ -208,11 +222,23 @@ namespace Zoo_tycoon
                 Canvas.SetLeft(border, cursorPositions.point.X);
                 Canvas.SetTop(border, cursorPositions.point.Y);
                 Placements[cursorPositions.row, cursorPositions.col] = 1;
+                Placements[cursorPositions.row + 1, cursorPositions.col] = 1;
+                Placements[cursorPositions.row, cursorPositions.col + 1] = 1;
+                Placements[cursorPositions.row + 1, cursorPositions.col + 1] = 1;
 
+                selectedAnimal.Cords = cursorPositions.point;
+                selectedAnimal.RowCol = [cursorPositions.row, cursorPositions.col];
+
+                if (0 <= money - selectedAnimal.BuyPrice)
+                    money -= selectedAnimal.BuyPrice;
+                else
+                    MessageBox.Show("Te csóró geci");
+                MoneyText.Text = $"{money}$";
+                PlacedAnimals.Add((cursorPositions.row, cursorPositions.col), selectedAnimal);
+                PlacedAnimals.Add((cursorPositions.row + 1, cursorPositions.col), selectedAnimal);
+                PlacedAnimals.Add((cursorPositions.row, cursorPositions.col + 1), selectedAnimal);
+                PlacedAnimals.Add((cursorPositions.row + 1, cursorPositions.col + 1), selectedAnimal);
                 
-                selectedAnimal.cords = cursorPositions.point;
-                PlacedAnimals.Add(selectedAnimal);
-
                 for (int i = MainGameGrid.Children.Count - 1; i >= 0; i--)
                 {
                     if (MainGameGrid.Children[i] is Border)
@@ -224,6 +250,8 @@ namespace Zoo_tycoon
 
                 MainGameGrid.MouseMove -= mouseTrackerSnap;
                 MainGameCanvas.MouseLeftButtonUp -= placeAnimal;
+
+                ActivateBuilds();
             }
             
         }
@@ -277,7 +305,7 @@ namespace Zoo_tycoon
                     Placements[pos.row, pos.col] = 3;
                 }
 
-                ConvertConnectedRoadsTo4();
+                ActivateBuilds();
 
                 PlacedRoads.Add(new Road(pos.point));
 
@@ -287,12 +315,16 @@ namespace Zoo_tycoon
                 Canvas.SetLeft(rectangle, pos.point.X);
                 Canvas.SetTop(rectangle, pos.point.Y);
 
-                
+                if (0 <= money - 25)
+                    money -= 25;
+                else
+                    MessageBox.Show("Te csóró geci");
+                MoneyText.Text = $"{money}$";
             }
         }
         
         
-        public void ConvertConnectedRoadsTo4()
+        public void ActivateBuilds()
         {
             bool changed = true;
 
@@ -306,35 +338,48 @@ namespace Zoo_tycoon
                     {
                         if (Placements[i, j] == 2)
                         {
-                            if (i + 1 < 30 && Placements[i + 1, j] == 3)
-                            {
-                                Placements[i, j] = 3;
-                                changed = true;
-                            }
-
-                            else if (i - 1 >= 0 && Placements[i - 1, j] == 3)
-                            {
-                                Placements[i, j] = 3;
-                                changed = true;
-                            }
-
-                            else if (j + 1 < 43 && Placements[i, j + 1] == 3)
-                            {
-                                Placements[i, j] = 3;
-                                changed = true;
-                            }
-
-                            else if (j - 1 >= 0 && Placements[i, j - 1] == 3)
+                            if (IsNear(i, j, 3))
                             {
                                 Placements[i, j] = 3;
                                 changed = true;
                             }
                         }
+                        if (Placements[i, j] == 1 && IsNear(i, j, 3))
+                        {
+                            ActivateAnimal(i, j);
+                            changed = true;
+                        }
                     }
                 }
+                
             }
         }
+        public void ActivateAnimal(int i, int j)
+        {
+            if (!PlacedAnimals.ContainsKey((i, j)))
+                return;
 
+            Animals animal = PlacedAnimals[(i, j)];
+
+            foreach (var cell in PlacedAnimals)
+            {
+                if (cell.Value == animal)
+                {
+                    Placements[cell.Key.Item1, cell.Key.Item2] = 4;
+                }
+            }
+
+            animal.Active = true;
+        }
+        public bool IsNear(int i, int j, int value)
+        {
+            if (i + 1 < 30 && Placements[i + 1, j] == value) return true;
+            if (i - 1 >= 0 && Placements[i - 1, j] == value) return true;
+            if (j + 1 < 43 && Placements[i, j + 1] == value) return true;
+            if (j - 1 >= 0 && Placements[i, j - 1] == value) return true;
+
+            return false;
+        }
         public void cancelRoadPlacement(object sender, EventArgs args)
         {
             MainGameGrid.MouseMove -= mouseTrackerSnap;
@@ -359,7 +404,7 @@ namespace Zoo_tycoon
             button.Background = Brushes.LightBlue;
         }
 
-        public async void GameLoop(object sender, EventArgs args)
+        public async void TimeLoop(object sender, EventArgs args)
         {
             DayTime += TimeSpan.FromMinutes(1);
             TimeBlock.Text = $"{DayTime.Hours}:{DayTime.Minutes}";
@@ -399,6 +444,39 @@ namespace Zoo_tycoon
             }
             Canvas.SetTop(Sun, SunPos);
         }
+
+        public void GameLoop(object sender, EventArgs args)
+        {
+            HashSet<Animals> asd = PlacedAnimals.Values.ToHashSet();
+            int maxPopularity = asd.Where(a => a.Active).Sum(a => a.Popularity);
+            if (costumers < maxPopularity - 5 && rnd.Next(1, 101) > 25 && maxPopularity != 0)
+            {
+                gameLoop.Interval = TimeSpan.FromSeconds(2);
+                costumers += 4;
+                money += 16 * 2 + 8 * 2; //felnőtt és gyerek jegy
+            }
+            else if (costumers > maxPopularity + 5 && rnd.Next(1, 101) > 75 && maxPopularity != 0)
+            {
+                gameLoop.Interval = TimeSpan.FromSeconds(10);
+                costumers += 2;
+                money += 16 + 8; 
+            }
+            else if (costumers > maxPopularity + 5 && rnd.Next(1, 101) > 10 && maxPopularity != 0)
+                costumers -= 4;
+            else if (costumers < maxPopularity - 5 && rnd.Next(1, 101) > 90 && maxPopularity != 0) 
+                costumers -= 2;
+            else if (rnd.Next(1, 101) > 50 && maxPopularity != 0) { 
+                gameLoop.Interval = TimeSpan.FromSeconds(3);
+                costumers += 3;
+                money += 16 * 2 + 8; 
+            }
+            else if(rnd.Next(1, 101) > 50 && maxPopularity != 0)
+            {
+                gameLoop.Interval = TimeSpan.FromSeconds(3);
+                costumers -= 3;
+            }
+            CostumersText.Text = "Customers: " + costumers.ToString();
+            MoneyText.Text = $"{money}$";
+        }
     }
 }
-
