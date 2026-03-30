@@ -26,7 +26,6 @@ namespace Zoo_tycoon
         Point CursorCords;
         Dictionary<(int, int), Animals> PlacedAnimals = new();
         List<Road> PlacedRoads = new();
-        int costumers = new();
         int[,] Placements = new int[30, 43];
         DispatcherTimer GameTime = new();
         TimeSpan DayTime = new();
@@ -34,11 +33,13 @@ namespace Zoo_tycoon
         TimeSpan gameLoopTime = new();
         Random rnd = new();
         double SunPos;
-        int money = new();
+        User user = new User();
 
         public MainWindow()
         {
             InitializeComponent();
+            
+
             SunPos = Canvas.GetTop(Sun);
             for (int j = 0; j < 43; j++)
             {
@@ -73,7 +74,7 @@ namespace Zoo_tycoon
             gameLoop.Tick += GameLoop;
             gameLoop.Start();
 
-            money = 500;
+            user.Money = 500;
         }
 
         //Animals-Images-Placement
@@ -229,11 +230,11 @@ namespace Zoo_tycoon
                 selectedAnimal.Cords = cursorPositions.point;
                 selectedAnimal.RowCol = [cursorPositions.row, cursorPositions.col];
 
-                if (0 <= money - selectedAnimal.BuyPrice)
-                    money -= selectedAnimal.BuyPrice;
+                if (0 <= user.Money - selectedAnimal.BuyPrice)
+                    user.Money -= selectedAnimal.BuyPrice;
                 else
                     MessageBox.Show("Te csóró geci");
-                MoneyText.Text = $"{money}$";
+                MoneyText.Text = $"{user.Money}$";
                 PlacedAnimals.Add((cursorPositions.row, cursorPositions.col), selectedAnimal);
                 PlacedAnimals.Add((cursorPositions.row + 1, cursorPositions.col), selectedAnimal);
                 PlacedAnimals.Add((cursorPositions.row, cursorPositions.col + 1), selectedAnimal);
@@ -315,11 +316,11 @@ namespace Zoo_tycoon
                 Canvas.SetLeft(rectangle, pos.point.X);
                 Canvas.SetTop(rectangle, pos.point.Y);
 
-                if (0 <= money - 25)
-                    money -= 25;
+                if (0 <= user.Money - 25)
+                    user.Money -= 25;
                 else
                     MessageBox.Show("Te csóró geci");
-                MoneyText.Text = $"{money}$";
+                MoneyText.Text = $"{user.Money}$";
             }
         }
         
@@ -449,34 +450,34 @@ namespace Zoo_tycoon
         {
             HashSet<Animals> asd = PlacedAnimals.Values.ToHashSet();
             int maxPopularity = asd.Where(a => a.Active).Sum(a => a.Popularity);
-            if (costumers < maxPopularity - 5 && rnd.Next(1, 101) > 25 && maxPopularity != 0)
+            if (user.Costumers < maxPopularity - 5 && rnd.Next(1, 101) > 25 && maxPopularity != 0)
             {
                 gameLoop.Interval = TimeSpan.FromSeconds(2);
-                costumers += 4;
-                money += 16 * 2 + 8 * 2; //felnőtt és gyerek jegy
+                user.Costumers += 4;
+                user.Money += 16 * 2 + 8 * 2; //felnőtt és gyerek jegy
             }
-            else if (costumers > maxPopularity + 5 && rnd.Next(1, 101) > 75 && maxPopularity != 0)
+            else if (user.Costumers > maxPopularity + 5 && rnd.Next(1, 101) > 75 && maxPopularity != 0)
             {
                 gameLoop.Interval = TimeSpan.FromSeconds(10);
-                costumers += 2;
-                money += 16 + 8; 
+                user.Costumers += 2;
+                user.Money += 16 + 8; 
             }
-            else if (costumers > maxPopularity + 5 && rnd.Next(1, 101) > 10 && maxPopularity != 0)
-                costumers -= 4;
-            else if (costumers < maxPopularity - 5 && rnd.Next(1, 101) > 90 && maxPopularity != 0) 
-                costumers -= 2;
+            else if (user.Costumers > maxPopularity + 5 && rnd.Next(1, 101) > 10 && maxPopularity != 0)
+                user.Costumers -= 4;
+            else if (user.Costumers < maxPopularity - 5 && rnd.Next(1, 101) > 90 && maxPopularity != 0) 
+                user.Costumers -= 2;
             else if (rnd.Next(1, 101) > 50 && maxPopularity != 0) { 
                 gameLoop.Interval = TimeSpan.FromSeconds(3);
-                costumers += 3;
-                money += 16 * 2 + 8; 
+                user.Costumers += 3;
+                user.Money += 16 * 2 + 8; 
             }
             else if(rnd.Next(1, 101) > 50 && maxPopularity != 0)
             {
                 gameLoop.Interval = TimeSpan.FromSeconds(3);
-                costumers -= 3;
+                user.Costumers -= 3;
             }
-            CostumersText.Text = "Customers: " + costumers.ToString();
-            MoneyText.Text = $"{money}$";
+            CostumersText.Text = "Customers: " + user.Costumers.ToString();
+            MoneyText.Text = $"{user.Money}$";
         }
     }
 }

@@ -11,5 +11,10 @@ namespace Zoo_tycoon
     {
         public Point Point { get; set; }
         public bool connectedToEntrance { get; set; }
+
+        public Road(Point point)
+        {
+            Point = point;
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Zoo_tycoon
     {
         public string Zoo_Name { get; set; }
         public int Money {  get; set; }
-        public int Popularity { get; set; }
+        public int Costumers { get; set; }
 
     }
 }
