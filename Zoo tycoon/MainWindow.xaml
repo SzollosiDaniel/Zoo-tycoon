@@ -7,13 +7,55 @@
         mc:Ignorable="d"
         Title="MainWindow" WindowState="Maximized" ResizeMode="CanResize" WindowStartupLocation="CenterScreen">
     <Viewbox>
-    <Grid Width="1615" Height="923">
+        <Grid Width="1920" Height="1080">
         <Grid.RowDefinitions>
             <RowDefinition Height="75"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <Grid Grid.Row="1">
+            <Canvas Grid.RowSpan="2" Background="White" Panel.ZIndex="2000" Visibility="Collapsed" Name="accountManagementCanvas">
+                <Border BorderThickness="4" BorderBrush="Black" CornerRadius="10" Canvas.Left="560" Canvas.Top="40"  Name="LogInCanvas">
+                    <Grid Height="1000" Width="800">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Log in" FontSize="80" Width="220" Grid.Row="0"/>
+                        <TextBlock Text="Username" FontSize="50" Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,280,0"/>
+                        <TextBox Width="500" Height="60" BorderThickness="3" FontSize="40" Grid.Row="1" Name="LogInUsername"/>
+                        <TextBlock Text="Password" FontSize="50" Grid.Row="2" Margin="0,0,280,0" HorizontalAlignment="Center"/>
+                        <PasswordBox Width="500" Height="60" BorderThickness="3" FontSize="40" Grid.Row="2" Name="LogInPassword"/>
+                        <Button Height="100" Width="200"  Content="Confirm" FontSize="45" Background="LightBlue" Grid.Row="3" Name="LogInButton"/>
+                        <TextBlock   Text="Dont have an Account?" FontSize="30" Grid.Row="4" Width="310" Margin="170,0,0,0" HorizontalAlignment="Left"/>
+                        <TextBlock  Text="Create one" FontSize="30" Foreground="Blue" Grid.Row="4" HorizontalAlignment="Left" Width="150" Margin="480,0,0,0" Name="CreateAccountText"/>
+                    </Grid>
+                </Border>
+                <Border BorderThickness="4" BorderBrush="Black" CornerRadius="10" Canvas.Left="560" Canvas.Top="40" Name="CreateCanvas" Visibility="Hidden">
+                    <Grid Height="1000" Width="800">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Create An Account" FontSize="80" Grid.Row="0" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Username" FontSize="40" Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,325,0"/>
+                        <TextBox Width="500" Height="60" BorderThickness="3" FontSize="40" Grid.Row="1" Name="CreateUsername"/>
+                        <TextBlock Text="Password" FontSize="40" Grid.Row="2" Margin="0,0,325,0" HorizontalAlignment="Center"/>
+                        <PasswordBox Width="500" Height="60" BorderThickness="3" FontSize="40" Grid.Row="2" Name="CreatePassword"/>
+                        <TextBlock Text="Repeat Password" FontSize="40" Grid.Row="3" Margin="0,0,200,0" HorizontalAlignment="Center"/>
+                        <PasswordBox Width="500" Height="60" BorderThickness="3" FontSize="40" Grid.Row="3" Name="RepeatPassword" />
+                        <Button Height="100" Width="200"  Content="Confirm" FontSize="45" Background="LightBlue" Grid.Row="4" Name="CreateAccountButton"/>
+                        <TextBlock   Text="Already have an Account?" FontSize="30" Grid.Row="5" Width="350" Margin="150,0,0,0" HorizontalAlignment="Left"/>
+                        <TextBlock  Text="Log in" FontSize="30" Foreground="Blue" Grid.Row="5" HorizontalAlignment="Left" Width="150" Margin="500,0,0,0" Name="LogInText"/>
+                    </Grid>
+                </Border>
+            </Canvas>
+            <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
@@ -53,7 +95,7 @@
 
         <Border BorderThickness="5px" BorderBrush="Black" CornerRadius="10" Grid.Row="0">
             <Canvas Background="SaddleBrown">
-                <TextBlock Width="auto" Margin="0,10,0,0" Height="auto" Text="Zoo name" FontSize="30" Foreground="White"/>
+                <TextBlock Width="auto" Margin="0,10,0,0" Height="auto" Text="Zoo name" FontSize="30" Foreground="White" Name="ZooName"/>
                 <Image Source="/Images/MenuIcons/customer.png" Height="40" Margin="350,13,0,0"/>
                 <TextBlock Width="auto" Margin="400,20,0,0" Height="auto" Text="Customers" FontSize="22" Foreground="White" Name="CostumersText"/>
                 <Image Source="/Images/MenuIcons/money.png" Margin="750,16,0,0" Height="40"/>

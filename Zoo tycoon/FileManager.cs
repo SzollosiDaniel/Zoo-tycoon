@@ -4,6 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Security.Cryptography;
+using System.Text.Unicode;
 
 namespace Zoo_tycoon
 {
@@ -24,6 +27,45 @@ namespace Zoo_tycoon
                 Console.WriteLine(e.Message);
             }
             return list;
+        }
+        public static Dictionary<string, string> ReadLogInInfos()
+        {
+            Dictionary<string, string> LogInInfos = new();
+            try
+            {
+                foreach (string item in File.ReadAllLines("LogInInfos.txt", Encoding.UTF8))
+                {
+                    string[] parts = item.Split(';');
+
+                    if (parts.Length == 2)
+                    {
+                        string username = parts[0];
+                        string password = parts[1];
+
+                        LogInInfos.Add(username, password);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            return LogInInfos;
+        }
+        public static void CreateAccount(string username, string password)
+        {
+            try
+            {
+                StreamWriter write = new StreamWriter("LogInInfos.txt", true);
+                UTF8Encoding utf8 = new();
+                string newPassword = BitConverter.ToString(MD5.HashData(utf8.GetBytes(password)));
+                write.WriteLine($"{username};{newPassword}");
+                write.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
         }
     }
 }

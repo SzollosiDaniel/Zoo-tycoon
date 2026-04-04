@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Unicode;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -34,11 +37,11 @@ namespace Zoo_tycoon
         Random rnd = new();
         double SunPos;
         User user = new User();
-
+        Dictionary<string, string> LogInInfos = new();
         public MainWindow()
         {
             InitializeComponent();
-            
+            LogInInfos = FileManager.ReadLogInInfos();
 
             SunPos = Canvas.GetTop(Sun);
             for (int j = 0; j < 43; j++)
@@ -75,6 +78,12 @@ namespace Zoo_tycoon
             gameLoop.Start();
 
             user.Money = 500;
+
+            accountManagementCanvas.Visibility = Visibility.Visible;
+            CreateAccountText.MouseUp += SwitchToCreateAccount;
+            LogInText.MouseUp += SwitchToLogIn;
+            CreateAccountButton.Click += CreateNewAccount;
+            LogInButton.Click += LogInAccount;
         }
 
         //Animals-Images-Placement
@@ -478,6 +487,61 @@ namespace Zoo_tycoon
             }
             CostumersText.Text = "Customers: " + user.Costumers.ToString();
             MoneyText.Text = $"{user.Money}$";
+        }
+
+        public void SwitchToCreateAccount(object sender, MouseButtonEventArgs args)
+        {
+            LogInCanvas.Visibility = Visibility.Collapsed;
+            LogInUsername.Text = "";
+            LogInPassword.Password = "";
+            CreateCanvas.Visibility = Visibility.Visible;
+        }
+        public void SwitchToLogIn(object sender, MouseButtonEventArgs args)
+        {
+            ShowLogin();
+        }
+        public void ShowLogin()
+        {
+            LogInCanvas.Visibility = Visibility.Visible;
+            CreateUsername.Text = "";
+            CreatePassword.Password = "";
+            RepeatPassword.Password = "";
+            CreateCanvas.Visibility = Visibility.Collapsed;
+        }
+
+        public void CreateNewAccount(object sender, EventArgs args)
+        {
+            if (LogInInfos.ContainsKey(CreateUsername.Text))
+                MessageBox.Show("Username already exists");
+            
+            else if(CreatePassword.Password != RepeatPassword.Password)
+                MessageBox.Show("Passwords doesn't match");
+            
+            else
+            {
+                FileManager.CreateAccount(CreateUsername.Text, CreatePassword.Password);
+                LogInInfos = FileManager.ReadLogInInfos();
+                MessageBox.Show("Account Created");
+                ShowLogin();
+            }
+        }
+        public void LogInAccount(object sender, EventArgs args)
+        {
+            UTF8Encoding utf8 = new UTF8Encoding();
+            if (LogInInfos.ContainsKey(LogInUsername.Text) &&
+                BitConverter.ToString(MD5.HashData(utf8.GetBytes(LogInPassword.Password))) == LogInInfos[LogInUsername.Text])
+            {
+                LogInCanvas.Visibility = Visibility.Collapsed;
+                ZooName.Text = LogInUsername.Text.ToString() + "'s zoo";
+                LogInUsername.Text = "";
+                LogInPassword.Password = "";
+                MessageBox.Show("Successful log in");
+                accountManagementCanvas.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                MessageBox.Show("Wrong username or password");
+            }
         }
     }
 }
