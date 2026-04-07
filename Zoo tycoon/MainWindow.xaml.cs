@@ -25,9 +25,13 @@ namespace Zoo_tycoon
         DispatcherTimer timer;
         bool buildConfirmed;
         bool isRoad;
-        Animals selectedAnimal;
+ 
         Point CursorCords;
-        Dictionary<(int, int), Animals> PlacedAnimals = new();
+
+        Animals selectedAnimal;
+        Dictionary<(int, int), Animals> PlacedAnimalsCords = new();
+        List<Animals> PlacedAnimals = new List<Animals>();
+
         List<Road> PlacedRoads = new();
         int[,] Placements = new int[30, 43];
         DispatcherTimer GameTime = new();
@@ -38,6 +42,7 @@ namespace Zoo_tycoon
         double SunPos;
         User user = new User();
         Dictionary<string, string> LogInInfos = new();
+        bool Sell = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -54,7 +59,7 @@ namespace Zoo_tycoon
             }
 
             animals = FileManager.ReadFile("animals.txt");
-
+            RoadButton.Content = $"Road\n25$";
             Grid.SetColumnSpan(MainGameCanvas, 43);
             Grid.SetRowSpan(MainGameCanvas, 30);
             Panel.SetZIndex(MainGameCanvas, 1000);
@@ -84,6 +89,7 @@ namespace Zoo_tycoon
             LogInText.MouseUp += SwitchToLogIn;
             CreateAccountButton.Click += CreateNewAccount;
             LogInButton.Click += LogInAccount;
+            SellButton.Click += SellButtonEvent;
         }
 
         //Animals-Images-Placement
@@ -128,10 +134,16 @@ namespace Zoo_tycoon
         }
         public void AnimalOnClick(object sender, EventArgs args)
         {
+            
             cancelRoadPlacement(RoadButton, new RoutedEventArgs());
             isRoad = false;
             Button button = sender as Button;
             selectedAnimal = animals.Find(a => a.Type == button.Name);
+            if (0 > user.Money - selectedAnimal.BuyPrice)
+            {
+                MessageBox.Show("Not enough money");
+                return;
+            }
             for (int i = 0; i < 43; i++)
             {
                 for (int j = 0; j < 30; j++)
@@ -163,10 +175,10 @@ namespace Zoo_tycoon
             bool canPlace;
             if (isRoad)
             {
-                canPlace = Placements[pos.row, pos.col] == 0 ||
+                canPlace = (Placements[pos.row, pos.col] == 0 ||
                            Placements[pos.row, pos.col] == 2 ||
                            Placements[pos.row, pos.col] == 10 ||
-                           Placements[pos.row, pos.col] == 3;
+                           Placements[pos.row, pos.col] == 3);
 
             }
             else
@@ -218,6 +230,7 @@ namespace Zoo_tycoon
                 Border border = new Border() { BorderBrush = Brushes.Black, BorderThickness = new Thickness(2),
                     Width = MouseTrackingRectangle.Width,
                     Height = MouseTrackingRectangle.Height,
+                    Name = "Index" + (PlacedAnimals.Count).ToString()
                 };
 
                 Image image = new Image()
@@ -225,6 +238,8 @@ namespace Zoo_tycoon
                     Source = new BitmapImage(new Uri($"Images/Animals/{selectedAnimal.Type}.png", UriKind.Relative))
                 };
                 border.Child = image;
+                border.MouseLeftButtonUp += AnimalLeftClick;
+
                 MainGameCanvas.Children.Add(border);
 
                 var cursorPositions = CursorPositionConvert(args.GetPosition(MainGameGrid));
@@ -237,18 +252,20 @@ namespace Zoo_tycoon
                 Placements[cursorPositions.row + 1, cursorPositions.col + 1] = 1;
 
                 selectedAnimal.Cords = cursorPositions.point;
-                selectedAnimal.RowCol = [cursorPositions.row, cursorPositions.col];
+
+                PlacedAnimals.Add(selectedAnimal);
 
                 if (0 <= user.Money - selectedAnimal.BuyPrice)
                     user.Money -= selectedAnimal.BuyPrice;
                 else
                     MessageBox.Show("Te csóró geci");
                 MoneyText.Text = $"{user.Money}$";
-                PlacedAnimals.Add((cursorPositions.row, cursorPositions.col), selectedAnimal);
-                PlacedAnimals.Add((cursorPositions.row + 1, cursorPositions.col), selectedAnimal);
-                PlacedAnimals.Add((cursorPositions.row, cursorPositions.col + 1), selectedAnimal);
-                PlacedAnimals.Add((cursorPositions.row + 1, cursorPositions.col + 1), selectedAnimal);
-                
+                PlacedAnimalsCords.Add((cursorPositions.row, cursorPositions.col), selectedAnimal);
+                PlacedAnimalsCords.Add((cursorPositions.row + 1, cursorPositions.col), selectedAnimal);
+                PlacedAnimalsCords.Add((cursorPositions.row, cursorPositions.col + 1), selectedAnimal);
+                PlacedAnimalsCords.Add((cursorPositions.row + 1, cursorPositions.col + 1), selectedAnimal);
+                PlacedAnimals.Add(selectedAnimal);
+
                 for (int i = MainGameGrid.Children.Count - 1; i >= 0; i--)
                 {
                     if (MainGameGrid.Children[i] is Border)
@@ -266,8 +283,34 @@ namespace Zoo_tycoon
             
         }
 
+        public void AnimalLeftClick(object sender, MouseButtonEventArgs args)
+        {
+            Border border = sender as Border;
+            Animals animal = PlacedAnimals[Convert.ToInt32(border.Name.Split('x')[1])];
+            if (Sell)
+            {
+                MainGameCanvas.Children.Remove(border);
+                user.Money += animal.SellPrice;
+                MoneyText.Text = $"{user.Money}$";
+            }
+            else
+            {
+                MessageBox.Show("Nope");
+            }
+        }
+
+        public void SellButtonEvent(object sender, EventArgs args)
+        {
+            Sell = true;
+        }
+
         public void Road(object sender, EventArgs args)
         {
+            if (0 > user.Money - 25)
+            {
+                MessageBox.Show("Not enough money");
+                return;
+            }
             isRoad = true;
             for (int i = 0; i < 43; i++)
             {
@@ -325,11 +368,7 @@ namespace Zoo_tycoon
                 Canvas.SetLeft(rectangle, pos.point.X);
                 Canvas.SetTop(rectangle, pos.point.Y);
 
-                if (0 <= user.Money - 25)
-                    user.Money -= 25;
-                else
-                    MessageBox.Show("Te csóró geci");
-                MoneyText.Text = $"{user.Money}$";
+                
             }
         }
         
@@ -366,12 +405,12 @@ namespace Zoo_tycoon
         }
         public void ActivateAnimal(int i, int j)
         {
-            if (!PlacedAnimals.ContainsKey((i, j)))
+            if (!PlacedAnimalsCords.ContainsKey((i, j)))
                 return;
 
-            Animals animal = PlacedAnimals[(i, j)];
+            Animals animal = PlacedAnimalsCords[(i, j)];
 
-            foreach (var cell in PlacedAnimals)
+            foreach (var cell in PlacedAnimalsCords)
             {
                 if (cell.Value == animal)
                 {
@@ -457,7 +496,7 @@ namespace Zoo_tycoon
 
         public void GameLoop(object sender, EventArgs args)
         {
-            HashSet<Animals> asd = PlacedAnimals.Values.ToHashSet();
+            HashSet<Animals> asd = PlacedAnimalsCords.Values.ToHashSet();
             int maxPopularity = asd.Where(a => a.Active).Sum(a => a.Popularity);
             if (user.Costumers < maxPopularity - 5 && rnd.Next(1, 101) > 25 && maxPopularity != 0)
             {

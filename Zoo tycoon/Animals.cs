@@ -28,7 +28,6 @@ namespace Zoo_tycoon
             Count = 0;
             Active = false;
             Cords = new Point(0,0);
-            RowCol = [0, 0];
         }
     }
 }

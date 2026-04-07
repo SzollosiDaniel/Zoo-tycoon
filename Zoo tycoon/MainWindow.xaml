@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Zoo_tycoon"
         mc:Ignorable="d"
         Title="MainWindow" WindowState="Maximized" ResizeMode="CanResize" WindowStartupLocation="CenterScreen">
-    <Viewbox>
+    <Viewbox OpacityMask="Red">
         <Grid Width="1920" Height="1080">
         <Grid.RowDefinitions>
             <RowDefinition Height="75"/>
@@ -64,13 +64,13 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid Name="MainGameGrid" Width="1150" Height="800" VerticalAlignment="Top" HorizontalAlignment="Left" Background="DarkGreen"/>
+            <Grid Name="MainGameGrid" Width="1500" Height="955" VerticalAlignment="Top" HorizontalAlignment="Left" Background="DarkGreen"/>
 
-            <Border Grid.Row="2" Height="50" VerticalAlignment="Bottom" Background="DarkGreen" Width="1150" BorderBrush="Black" BorderThickness="0,7,0,0"/>
-            <TextBlock Width="250.38" Grid.Row="2" VerticalAlignment="Bottom" Height="50" Background="Gray" Text="Entrance" FontSize="40" TextAlignment="Center"/>
-            <Canvas Name="MainGameCanvas" Grid.Row="0" HorizontalAlignment="Left" Panel.ZIndex="1001">
+            <Border Grid.Row="2" Height="50" VerticalAlignment="Bottom" Background="DarkGreen" Width="1500" BorderBrush="Black" BorderThickness="0,7,0,0"/>
+            <TextBlock Width="318" Grid.Row="2" VerticalAlignment="Bottom" Height="50" Background="Gray" Text="Entrance" FontSize="40" TextAlignment="Center"/>
+            <Canvas Name="MainGameCanvas" HorizontalAlignment="Left" Panel.ZIndex="1001">
                 <Rectangle Name="MouseTrackingRectangle" Fill="LightGray" Opacity="0.8" Visibility="Collapsed" Width="53.48" Height="53.93" Canvas.Left="-100"/>
-                <Ellipse Fill="Beige" Opacity="0.1" Width="2000" Height="1600" Canvas.Top="-1500" Canvas.Left="-415" Name="Sun" Panel.ZIndex="1000" IsHitTestVisible="False"/>
+                <Ellipse Fill="Beige" Opacity="0.1" Width="2350" Height="1600" Canvas.Top="-1500" Canvas.Left="-415" Name="Sun" Panel.ZIndex="1000" IsHitTestVisible="False"/>
             </Canvas>
             <Border Grid.Column="2" Grid.RowSpan="2" BorderThickness="3" BorderBrush="Black" Margin="0,0,0,0" Name="MenuBarBorder" Panel.ZIndex="1001">
                 <Grid Background="SaddleBrown" Name="MenuBar">
@@ -85,6 +85,7 @@
                     </Grid.ColumnDefinitions>
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Animals" FontSize="20" Grid.Column="0" Name="AnimalsButton"/>
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Road" FontSize="20" Grid.Row="1" VerticalAlignment="Bottom" Name="RoadButton" Margin="0,0,0,30"/>
+                    <Button Height="60" Width="135" Background="Red" Content="Sell" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Name="SellButton" Margin="0,0,0,30"/>
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Shops" FontSize="20" Grid.Column="1" Name="ShopsButton"/>
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Stats" FontSize="20" Grid.Column="3" Name="StatsButton"/>
                 </Grid>
