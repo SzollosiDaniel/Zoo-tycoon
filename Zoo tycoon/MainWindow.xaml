@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Zoo_tycoon"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         Title="MainWindow" WindowState="Maximized" ResizeMode="CanResize" WindowStartupLocation="CenterScreen">
     <Viewbox OpacityMask="Red">
-        <Grid Width="1920" Height="1080">
+        <Grid Width="1920" Height="1080" Name="AllOfTheProgram">
         <Grid.RowDefinitions>
             <RowDefinition Height="75"/>
             <RowDefinition Height="*"/>
@@ -65,11 +66,11 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid Name="MainGameGrid" Width="1500" Height="955" VerticalAlignment="Top" HorizontalAlignment="Left" Background="DarkGreen"/>
-
-            <Border Grid.Row="2" Height="50" VerticalAlignment="Bottom" Background="DarkGreen" Width="1500" BorderBrush="Black" BorderThickness="0,7,0,0"/>
+                
+                <Border Grid.Row="2" Height="50" VerticalAlignment="Bottom" Background="DarkGreen" Width="1500" BorderBrush="Black" BorderThickness="0,7,0,0"/>
             <TextBlock Width="318" Grid.Row="2" VerticalAlignment="Bottom" Height="50" Background="Gray" Text="Entrance" FontSize="40" TextAlignment="Center"/>
             <Canvas Name="MainGameCanvas" HorizontalAlignment="Left" Panel.ZIndex="1001">
-                <Rectangle Name="MouseTrackingRectangle" Fill="LightGray" Opacity="0.8" Visibility="Collapsed" Width="53.48" Height="53.93" Canvas.Left="-100"/>
+                <TextBlock Name="MouseTrackingRectangle" Background="LightGray" Opacity="0.8" Visibility="Collapsed" Width="53.48" Height="53.93" Canvas.Left="-100"/>
                 <Ellipse Fill="Beige" Opacity="0.1" Width="2350" Height="1600" Canvas.Top="-1500" Canvas.Left="-415" Name="Sun" Panel.ZIndex="1000" IsHitTestVisible="False"/>
             </Canvas>
             <Border Grid.Column="2" Grid.RowSpan="2" BorderThickness="3" BorderBrush="Black" Margin="0,0,0,0" Name="MenuBarBorder" Panel.ZIndex="1001">
@@ -87,15 +88,16 @@
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Road" FontSize="20" Grid.Row="1" VerticalAlignment="Bottom" Name="RoadButton" Margin="0,0,0,30"/>
                     <Button Height="60" Width="135" Background="Red" Content="Sell" FontSize="20" Grid.Row="1" Grid.Column="1" VerticalAlignment="Bottom" Name="SellButton" Margin="0,0,0,30"/>
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Shops" FontSize="20" Grid.Column="1" Name="ShopsButton"/>
-                    <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Stats" FontSize="20" Grid.Column="3" Name="StatsButton"/>
-                </Grid>
+                    <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Inventory" FontSize="20" Grid.Column="3" Name="InventoryButton"/>
+                    
+                    </Grid>
 
             </Border>
            
         </Grid>
 
         <Border BorderThickness="5px" BorderBrush="Black" CornerRadius="10" Grid.Row="0">
-            <Canvas Background="SaddleBrown">
+                <Canvas Background="SaddleBrown">
                 <TextBlock Width="auto" Margin="0,10,0,0" Height="auto" Text="Zoo name" FontSize="30" Foreground="White" Name="ZooName"/>
                 <Image Source="/Images/MenuIcons/customer.png" Height="40" Margin="350,13,0,0"/>
                 <TextBlock Width="auto" Margin="400,20,0,0" Height="auto" Text="Customers" FontSize="22" Foreground="White" Name="CostumersText"/>

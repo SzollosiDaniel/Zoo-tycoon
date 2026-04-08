@@ -17,7 +17,9 @@ namespace Zoo_tycoon
         public int Count { get; set; } //0
         public bool Active { get; set; }
         public Point Cords { get; set; }
-        public int[] RowCol { get; set; }
+        public int Hunger { get; set; }
+        public int Health { get; set; }
+        public int Relationship { get; set; }
         public Animals(string[] data)
         {
             Type = data[0];
@@ -28,6 +30,9 @@ namespace Zoo_tycoon
             Count = 0;
             Active = false;
             Cords = new Point(0,0);
+            Hunger = 100;
+            Health = 100;
+            Relationship = 0;
         }
     }
 }

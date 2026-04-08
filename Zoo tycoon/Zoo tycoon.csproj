@@ -41,6 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Images\Animals\Bird.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

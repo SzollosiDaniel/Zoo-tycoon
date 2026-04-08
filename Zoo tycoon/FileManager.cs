@@ -28,6 +28,24 @@ namespace Zoo_tycoon
             }
             return list;
         }
+
+        public static List<Item> ReadItems()
+        {
+            List<Item> items = new List<Item>();
+            try
+            {
+                foreach (string item in File.ReadLines("items.txt", Encoding.UTF8).Skip(1))
+                {
+                    items.Add(new Item(item));
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+            return items;
+        }
+
         public static Dictionary<string, string> ReadLogInInfos()
         {
             Dictionary<string, string> LogInInfos = new();
