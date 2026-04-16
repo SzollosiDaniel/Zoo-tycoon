@@ -38,6 +38,20 @@
     <None Remove="Images\Shark.png" />
     <None Remove="Images\Snake.png" />
     <None Remove="Images\sun.png" />
+    <None Remove="txts\items.txt" />
+    <None Remove="txts\LogInInfos.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="txts\animals.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="txts\items.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="txts\LogInInfos.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

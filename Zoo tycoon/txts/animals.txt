@@ -1,0 +1,10 @@
+Type;Popularity;Price;
+Bird;10;10
+Snake;10;10
+Monkey;10;10
+Shark;10;10
+Crocodile;10;10
+Elephant;10;10
+Mammoth;10;10
+Dinosaur;10;10
+Dragon;10;10

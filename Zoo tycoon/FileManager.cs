@@ -34,7 +34,7 @@ namespace Zoo_tycoon
             List<Item> items = new List<Item>();
             try
             {
-                foreach (string item in File.ReadLines("items.txt", Encoding.UTF8).Skip(1))
+                foreach (string item in File.ReadLines("txts/items.txt", Encoding.UTF8).Skip(1))
                 {
                     items.Add(new Item(item));
                 }
@@ -51,7 +51,7 @@ namespace Zoo_tycoon
             Dictionary<string, string> LogInInfos = new();
             try
             {
-                foreach (string item in File.ReadAllLines("LogInInfos.txt", Encoding.UTF8))
+                foreach (string item in File.ReadAllLines("txts/LogInInfos.txt", Encoding.UTF8))
                 {
                     string[] parts = item.Split(';');
 
@@ -74,7 +74,7 @@ namespace Zoo_tycoon
         {
             try
             {
-                StreamWriter write = new StreamWriter("LogInInfos.txt", true);
+                StreamWriter write = new StreamWriter("txts/LogInInfos.txt", true);
                 UTF8Encoding utf8 = new();
                 string newPassword = BitConverter.ToString(MD5.HashData(utf8.GetBytes(password)));
                 write.WriteLine($"{username};{newPassword}");

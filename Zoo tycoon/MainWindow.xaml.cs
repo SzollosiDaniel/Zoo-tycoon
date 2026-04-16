@@ -24,7 +24,6 @@ namespace Zoo_tycoon
         List<Animals> animals;
         TextBlock PriceTag;
         DispatcherTimer timer;
-        bool buildConfirmed;
         bool isRoad;
  
         Point CursorCords;
@@ -60,7 +59,7 @@ namespace Zoo_tycoon
                 MainGameGrid.RowDefinitions.Add(new RowDefinition());
             }
             items = FileManager.ReadItems();
-            animals = FileManager.ReadFile("animals.txt");
+            animals = FileManager.ReadFile("txts/animals.txt");
             RoadButton.Content = $"Road\n25$";
             Grid.SetColumnSpan(MainGameCanvas, 43);
             Grid.SetRowSpan(MainGameCanvas, 30);
@@ -250,7 +249,17 @@ namespace Zoo_tycoon
             }
             else
             {
-                System.Windows.MessageBox.Show("Nope");
+                //< TextBlock Grid.Row = "1" Grid.ColumnSpan = "3" TextWrapping = "Wrap" Text = "Health" FontSize = "40" Margin = "20,100,0,0" Height = "50" VerticalAlignment = "Top" Foreground = "LightGreen" />
+                //< ProgressBar Grid.Row = "1" Grid.ColumnSpan = "3" Height = "25" Width = "350" Value = "100" Margin = "20,150,0,0" VerticalAlignment = "Top" HorizontalAlignment = "Left" BorderThickness = "2" Foreground = "LightGreen" Background = "Transparent" />
+                //< TextBlock Margin = "20,150,0,0" Grid.Row = "1" Grid.ColumnSpan = "3" Text = "100/100" FontSize = "18" Height = "20" VerticalAlignment = "Top" />
+                TextBlock HP = new TextBlock() { Text = "Health", FontSize = 40, Margin = new Thickness(20,100,0,0), Height = 50, VerticalAlignment = VerticalAlignment.Top, Foreground = Brushes.LightGreen};
+                ProgressBar HPBar = new ProgressBar() { Height = 25, Width = 350, Value = 100, Margin = new Thickness(20,150,0,0), VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Left, BorderThickness = new Thickness(2), Foreground = Brushes.LightGreen, Background = Brushes.Transparent};
+                TextBlock HPValueText = new TextBlock() { Text = $"{animal.Health}/100", FontSize = 18, Height = 20, VerticalAlignment = VerticalAlignment.Top };
+                MenuBar.Children.Add(HP);
+                MenuBar.Children.Add(HPBar);
+                MenuBar.Children.Add(HPValueText);
+                Grid.SetRow(HP, 1); Grid.SetRow(HPBar, 1); Grid.SetRow(HPValueText, 1);
+                Grid.SetColumnSpan(HP, 3); Grid.SetColumnSpan(HPBar, 3); Grid.SetColumnSpan(HPValueText, 3);
             }
         }
         //--------------------------------------------------------

@@ -91,12 +91,13 @@
                     <Button Height="60" Width="135" Background="DeepSkyBlue" Content="Inventory" FontSize="20" Grid.Column="3" Name="InventoryButton"/>
                         <TextBlock Grid.Row="1" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="Health" FontSize="40" Margin="20,100,0,0" Height="50" VerticalAlignment="Top" Foreground="LightGreen"/>
                         <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" Height="25" Width="350" Value="100" Margin="20,150,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" BorderThickness="2" Foreground="LightGreen" Background="Transparent"/>
-
+                        <TextBlock Margin="20,150,0,0" Grid.Row="1" Grid.ColumnSpan="3" Text="100/100" FontSize="18" Height="20" VerticalAlignment="Top"/>
                         <TextBlock Grid.Row="1" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="Hunger" FontSize="40" Margin="20,200,0,0" Height="55" VerticalAlignment="Top" Foreground="Gray"/>
                         <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" Height="25" Width="350" Value="0" Margin="20,250,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="Gray" Background="Transparent" BorderThickness="2"/>
-
+                        <TextBlock Margin="30,250,0,0" Grid.Row="1" Grid.ColumnSpan="3" Text="0/100" FontSize="18" Height="20" VerticalAlignment="Top"/>
                         <TextBlock Grid.Row="1" Grid.ColumnSpan="3" TextWrapping="Wrap" Text="Relationship" FontSize="40" Margin="20,300,0,0" Height="55" VerticalAlignment="Top" Foreground="Red"/>
                         <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" Height="25" Width="350" Value="0" Margin="20,350,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Foreground="Red" Background="Transparent" BorderThickness="2"/>
+                        <TextBlock Margin="30,350,0,0" Grid.Row="1" Grid.ColumnSpan="3" Text="0/100" FontSize="18" Height="20" VerticalAlignment="Top"/>
                     </Grid>
 
             </Border>
