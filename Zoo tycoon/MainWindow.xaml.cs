@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Unicode;
@@ -13,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Xceed.Wpf.Toolkit;
+using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace Zoo_tycoon
 {
@@ -25,9 +27,9 @@ namespace Zoo_tycoon
         TextBlock PriceTag;
         DispatcherTimer timer;
         bool isRoad;
- 
+        (bool, Animals) isStatsOn;
         Point CursorCords;
-
+        List<TextBlock> deaths = new();
         Animals selectedAnimal;
         Dictionary<(int, int), Animals> PlacedAnimalsCords = new();
         List<Animals> PlacedAnimals = new List<Animals>();
@@ -96,7 +98,7 @@ namespace Zoo_tycoon
             SellButton.Click += SellButtonEvent;
             InventoryButton.Click += InventoryButtonEvent;
 
-
+            LogOutButton.MouseLeftButtonUp += LogOutQuestion;
         }
 
         //Animals
@@ -110,6 +112,8 @@ namespace Zoo_tycoon
                     MenuBar.Children.RemoveAt(i);
                 }
             }
+            isStatsOn.Item1 = false;
+            isStatsOn.Item2 = null;
             List<DockPanel> Dockpanels = new List<DockPanel>();
             int margin = 10;
             int index = 0;
@@ -117,7 +121,7 @@ namespace Zoo_tycoon
             {
                 if (i % 3 == 0 || i == 0)
                 {
-                    DockPanel dockPanel = new DockPanel() { Height = 150, Width = 424, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, margin, 0, 0), Name = "Dockpanel" + Math.Floor(i/3)};
+                    DockPanel dockPanel = new DockPanel() { Height = 150, Width = 424, VerticalAlignment = VerticalAlignment.Top, Margin = new Thickness(0, margin, 0, 0), Name = "Dockpanel" + Math.Floor(i / 3) };
                     MenuBar.Children.Add(dockPanel);
                     Grid.SetRow(dockPanel, 2);
                     Grid.SetColumnSpan(dockPanel, 3);
@@ -128,8 +132,8 @@ namespace Zoo_tycoon
             foreach (Animals item in animals)
             {
                 double temp = index / 3;
-                Button button = new() {Width = 140, Height = 60, Background = Brushes.Transparent, BorderThickness = new Thickness(0,0,0,0), Name = $"{item.Type}"};
-                Image image = new Image() { Source = new BitmapImage(new Uri($"Images/Animals/{item.Type}.png", UriKind.Relative))};
+                Button button = new() { Width = 140, Height = 60, Background = Brushes.Transparent, BorderThickness = new Thickness(0, 0, 0, 0), Name = $"{item.Type}" };
+                Image image = new Image() { Source = new BitmapImage(new Uri($"Images/Animals/{item.Type}.png", UriKind.Relative)) };
                 button.Content = image;
                 button.MouseEnter += ShowAnimalsPrice;
                 button.MouseLeave += (sender, args) => { MainGameCanvas.Children.Remove(PriceTag); };
@@ -143,13 +147,13 @@ namespace Zoo_tycoon
         public void ShowAnimalsPrice(object sender, EventArgs args)
         {
             Button button = sender as Button;
-            Animals animal = animals.Find(a => a.Type == button.Name); 
-            PriceTag = new TextBlock() { Text = $"{animal.BuyPrice}$\nPopularity = {animal.Popularity}", FontSize = 36, Background = Brushes.Black, Margin = new Thickness(450,430,0,0), TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, Foreground = Brushes.White};
+            Animals animal = animals.Find(a => a.Type == button.Name);
+            PriceTag = new TextBlock() { Text = $"{animal.BuyPrice}$\nPopularity = {animal.Popularity}", FontSize = 36, Background = Brushes.Black, Margin = new Thickness(450, 430, 0, 0), TextAlignment = TextAlignment.Center, TextWrapping = TextWrapping.Wrap, Foreground = Brushes.White };
             MainGameCanvas.Children.Add(PriceTag);
         }
         public void AnimalOnClick(object sender, EventArgs args)
         {
-            
+
             cancelRoadPlacement(RoadButton, new RoutedEventArgs());
             isRoad = false;
             Sell = false;
@@ -176,13 +180,16 @@ namespace Zoo_tycoon
             MainGameCanvas.MouseLeftButtonUp += placeAnimal;
             MainGameCanvas.MouseLeftButtonUp -= placeRoad;
 
-            
+
         }
         public void placeAnimal(object sender, MouseButtonEventArgs args)
         {
             if (MouseTrackingRectangle.Background == Brushes.LightGray)
             {
-                Border border = new Border() { BorderBrush = Brushes.Black, BorderThickness = new Thickness(2),
+                Border border = new Border()
+                {
+                    BorderBrush = Brushes.Black,
+                    BorderThickness = new Thickness(2),
                     Width = MouseTrackingRectangle.Width,
                     Height = MouseTrackingRectangle.Height,
                     Name = "Index" + (PlacedAnimals.Count).ToString()
@@ -235,7 +242,7 @@ namespace Zoo_tycoon
 
                 ActivateBuilds();
             }
-            
+
         }
         public void AnimalLeftClick(object sender, MouseButtonEventArgs args)
         {
@@ -244,23 +251,49 @@ namespace Zoo_tycoon
             if (Sell)
             {
                 MainGameCanvas.Children.Remove(border);
+                MainGameCanvas.Children.Remove(deaths.Find(x => x.Name == $"index{PlacedAnimals.IndexOf(animal)}"));
                 user.Money += animal.SellPrice;
+                animal.Active = false;
                 MoneyText.Text = $"{user.Money}$";
             }
             else
             {
-                //< TextBlock Grid.Row = "1" Grid.ColumnSpan = "3" TextWrapping = "Wrap" Text = "Health" FontSize = "40" Margin = "20,100,0,0" Height = "50" VerticalAlignment = "Top" Foreground = "LightGreen" />
-                //< ProgressBar Grid.Row = "1" Grid.ColumnSpan = "3" Height = "25" Width = "350" Value = "100" Margin = "20,150,0,0" VerticalAlignment = "Top" HorizontalAlignment = "Left" BorderThickness = "2" Foreground = "LightGreen" Background = "Transparent" />
-                //< TextBlock Margin = "20,150,0,0" Grid.Row = "1" Grid.ColumnSpan = "3" Text = "100/100" FontSize = "18" Height = "20" VerticalAlignment = "Top" />
-                TextBlock HP = new TextBlock() { Text = "Health", FontSize = 40, Margin = new Thickness(20,100,0,0), Height = 50, VerticalAlignment = VerticalAlignment.Top, Foreground = Brushes.LightGreen};
-                ProgressBar HPBar = new ProgressBar() { Height = 25, Width = 350, Value = 100, Margin = new Thickness(20,150,0,0), VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Left, BorderThickness = new Thickness(2), Foreground = Brushes.LightGreen, Background = Brushes.Transparent};
-                TextBlock HPValueText = new TextBlock() { Text = $"{animal.Health}/100", FontSize = 18, Height = 20, VerticalAlignment = VerticalAlignment.Top };
-                MenuBar.Children.Add(HP);
-                MenuBar.Children.Add(HPBar);
-                MenuBar.Children.Add(HPValueText);
-                Grid.SetRow(HP, 1); Grid.SetRow(HPBar, 1); Grid.SetRow(HPValueText, 1);
-                Grid.SetColumnSpan(HP, 3); Grid.SetColumnSpan(HPBar, 3); Grid.SetColumnSpan(HPValueText, 3);
+                ShowAnimalStats(animal);
+                isStatsOn.Item1 = true;
+                isStatsOn.Item2 = animal;
             }
+        }
+        private void ShowAnimalStats(Animals animal)
+        {
+            for (int i = MenuBar.Children.Count - 1; i >= 0; i--)
+            {
+                if (MenuBar.Children[i] is not Button)
+                {
+                    MenuBar.Children.RemoveAt(i);
+                }
+            }
+
+            StackPanel statsPanel = new StackPanel();
+            MenuBar.Children.Add(statsPanel);
+            Grid.SetRow(statsPanel, 1);
+            Grid.SetColumnSpan(statsPanel, 3);
+
+            TextBlock healthText = new TextBlock() { Text = "Health", FontSize = 40, Margin = new Thickness(20, 100, 0, 0), Height = 50, VerticalAlignment = VerticalAlignment.Top, Foreground = Brushes.LightGreen };
+            ProgressBar healthBar = new ProgressBar() { Height = 25, Width = 350, Value = animal.Health, Margin = new Thickness(20, 10, 0, 0), VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Left, BorderThickness = new Thickness(2), Foreground = Brushes.LightGreen, Background = Brushes.Transparent };
+            statsPanel.Children.Add(healthText);
+            statsPanel.Children.Add(healthBar);
+
+
+            TextBlock hungerText = new TextBlock() { Text = "Hunger", FontSize = 40, Margin = new Thickness(20, 50, 0, 0), Height = 50, VerticalAlignment = VerticalAlignment.Top, Foreground = Brushes.Gray };
+            ProgressBar hungerBar = new ProgressBar() { Height = 25, Width = 350, Value = animal.Hunger, Margin = new Thickness(20, 10, 0, 0), VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Left, BorderThickness = new Thickness(2), Foreground = Brushes.Gray, Background = Brushes.Transparent };
+            statsPanel.Children.Add(hungerText);
+            statsPanel.Children.Add(hungerBar);
+
+
+            TextBlock relationText = new TextBlock() { Text = "Relationship", FontSize = 40, Margin = new Thickness(20, 50, 0, 0), Height = 50, VerticalAlignment = VerticalAlignment.Top, Foreground = Brushes.Red };
+            ProgressBar relationBar = new ProgressBar() { Height = 25, Width = 350, Value = animal.Relationship, Margin = new Thickness(20, 10, 0, 0), VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Left, BorderThickness = new Thickness(2), Foreground = Brushes.Red, Background = Brushes.Transparent };
+            statsPanel.Children.Add(relationText);
+            statsPanel.Children.Add(relationBar);
         }
         //--------------------------------------------------------
 
@@ -317,7 +350,7 @@ namespace Zoo_tycoon
         {
             if (MouseTrackingRectangle.Background == Brushes.LightGray)
             {
-                
+
 
                 var pos = CursorPositionConvert(args.GetPosition(MainGameGrid));
 
@@ -335,7 +368,7 @@ namespace Zoo_tycoon
 
                 PlacedRoads.Add(new Road(pos.point));
 
-                TextBlock rectangle = new TextBlock() { Background = Brushes.DarkGray, Width = MouseTrackingRectangle.Width, Height = MouseTrackingRectangle.Height, Name = $"index{PlacedRoads.Count - 1}"};
+                TextBlock rectangle = new TextBlock() { Background = Brushes.DarkGray, Width = MouseTrackingRectangle.Width, Height = MouseTrackingRectangle.Height, Name = $"index{PlacedRoads.Count - 1}" };
                 rectangle.MouseLeftButtonUp += SellRoad;
                 MainGameCanvas.Children.Add(rectangle);
                 Canvas.SetLeft(rectangle, pos.point.X);
@@ -388,7 +421,6 @@ namespace Zoo_tycoon
             MouseTrackingRectangle.Height = isRoad ? MainGameGrid.ActualHeight / 30 : MainGameGrid.ActualHeight / 30 * 2;
 
             Point cursorCords = args.GetPosition(MainGameGrid);
-
             var pos = CursorPositionConvert(cursorCords);
             bool canPlace;
             if (isRoad)
@@ -412,6 +444,9 @@ namespace Zoo_tycoon
             {
                 MouseTrackingRectangle.Background = Brushes.Red;
                 MouseTrackingRectangle.Text = "🗑";
+                MouseTrackingRectangle.TextAlignment = TextAlignment.Center;
+                MouseTrackingRectangle.FontSize = 35;
+               
             }
             else
             {
@@ -513,20 +548,13 @@ namespace Zoo_tycoon
         public async void TimeLoop(object sender, EventArgs args)
         {
             DayTime += TimeSpan.FromMinutes(1);
-            TimeBlock.Text = $"{DayTime.Hours}:{DayTime.Minutes}";
             if (DayTime.Hours >= 24)
                 DayTime = TimeSpan.FromHours(0);
 
 
-            TimeBlock.Text = $"{DayTime.Hours}:{DayTime.Minutes}";
-            if (DayTime.Hours >= 6 && DayTime.Hours < 18)
-            {
-                timeIcon.Source = new BitmapImage(new Uri("Images/MenuIcons/sun.png", UriKind.Relative));
-            }
-            else
-            {
-                timeIcon.Source = new BitmapImage(new Uri($"Images/MenuIcons/moon.png", UriKind.Relative));
-            }
+            TimeBlock.Text = DayTime.ToString(@"hh\:mm");
+            timeIcon.Source = DayTime.Hours >= 6 && DayTime.Hours < 18 ? new BitmapImage(new Uri("Images/MenuIcons/sun.png", UriKind.Relative)) : new BitmapImage(new Uri($"Images/MenuIcons/moon.png", UriKind.Relative));
+
             if (DayTime.Hours >= 6 && DayTime.Hours < 10)
             {
                 SunPos += 1100 / (4 * 60);
@@ -555,8 +583,9 @@ namespace Zoo_tycoon
         //GameLoop / Costumers
         public void GameLoop(object sender, EventArgs args)
         {
-            HashSet<Animals> asd = PlacedAnimalsCords.Values.ToHashSet();
-            int maxPopularity = asd.Where(a => a.Active).Sum(a => a.Popularity);
+            
+            HashSet<Animals> HashAnimals = PlacedAnimalsCords.Values.ToHashSet();
+            int maxPopularity = HashAnimals.Where(a => a.Active).Sum(a => a.Popularity);
             if (user.Costumers < maxPopularity - 5 && rnd.Next(1, 101) > 25 && maxPopularity != 0)
             {
                 gameLoop.Interval = TimeSpan.FromSeconds(2);
@@ -567,22 +596,59 @@ namespace Zoo_tycoon
             {
                 gameLoop.Interval = TimeSpan.FromSeconds(10);
                 user.Costumers += 2;
-                user.Money += 16 + 8; 
+                user.Money += 16 + 8;
             }
             else if (user.Costumers > maxPopularity + 5 && rnd.Next(1, 101) > 10 && maxPopularity != 0)
                 user.Costumers -= 4;
-            else if (user.Costumers < maxPopularity - 5 && rnd.Next(1, 101) > 90 && maxPopularity != 0) 
+            else if (user.Costumers < maxPopularity - 5 && rnd.Next(1, 101) > 90 && maxPopularity != 0)
                 user.Costumers -= 2;
-            else if (rnd.Next(1, 101) > 50 && maxPopularity != 0) { 
+            else if (rnd.Next(1, 101) > 50 && maxPopularity != 0)
+            {
                 gameLoop.Interval = TimeSpan.FromSeconds(3);
                 user.Costumers += 3;
-                user.Money += 16 * 2 + 8; 
+                user.Money += 16 * 2 + 8;
             }
-            else if(rnd.Next(1, 101) > 50 && maxPopularity != 0)
+            else if (rnd.Next(1, 101) > 50 && maxPopularity != 0)
             {
                 gameLoop.Interval = TimeSpan.FromSeconds(3);
                 user.Costumers -= 3;
             }
+            foreach (Animals item in HashAnimals)
+            {
+                bool yesOrNo = true;
+                item.Hunger -= 2;
+                if (item.Hunger <= 50 && item.Hunger > 25) item.Health -= 2;
+                else if (item.Hunger <= 25 && item.Hunger > 10) {
+                    item.Health -= 5;
+                    item.Active = false;
+                }
+                else if (item.Hunger <= 10) item.Health -= 10;
+                if(item.Hunger < 0) item.Hunger = 0; 
+
+                if (item.Health <= 0)
+                {
+                    
+                    item.Active = false;
+                    item.Health = 0;
+                    foreach (TextBlock yes in deaths)
+                    {
+                        if (yes.Name == $"index{PlacedAnimals.IndexOf(item)}")
+                        {
+                            yesOrNo = false;
+                        }
+                    }
+                    if (yesOrNo)
+                    {
+                        TextBlock death = new TextBlock() { Text = "X", FontSize = 60, TextAlignment = TextAlignment.Center, Background = Brushes.Black, Foreground = Brushes.Red, Name = $"index{PlacedAnimals.IndexOf(item)}", Opacity = 0.5, Width = MouseTrackingRectangle.Width + 5, Height = MouseTrackingRectangle.Height + 5, IsHitTestVisible = false };
+                        MainGameCanvas.Children.Add(death);
+                        Canvas.SetLeft(death, item.Cords.X);
+                        Canvas.SetTop(death, item.Cords.Y);
+                        deaths.Add(death);
+                    }
+                    
+                }
+            }
+            if (isStatsOn.Item1) ShowAnimalStats(isStatsOn.Item2);
             CostumersText.Text = "Customers: " + user.Costumers.ToString();
             MoneyText.Text = $"{user.Money}$";
             ActivateBuilds();
@@ -592,10 +658,11 @@ namespace Zoo_tycoon
         //Inventory
         public void InventoryButtonEvent(object sender, EventArgs args)
         {
-
+            isStatsOn.Item1 = false;
+            isStatsOn.Item2 = null;
             for (int i = MenuBar.Children.Count - 1; i >= 0; i--)
             {
-                if (MenuBar.Children[i] is DockPanel)
+                if (MenuBar.Children[i] is DockPanel || MenuBar.Children[i] is StackPanel)
                 {
                     MenuBar.Children.RemoveAt(i);
                 }
@@ -609,7 +676,8 @@ namespace Zoo_tycoon
             foreach (Item item in items)
             {
                 Grid itemLine = new() { Height = 30 };
-                for (int j = 0; j < 4; j++) { 
+                for (int j = 0; j < 4; j++)
+                {
                     itemLine.ColumnDefinitions.Add(new ColumnDefinition());
                 }
                 TextBlock itemText = new TextBlock() { Text = $"{item.Name} <{item.Have}>", FontSize = 20, HorizontalAlignment = HorizontalAlignment.Center };
@@ -645,11 +713,11 @@ namespace Zoo_tycoon
                     priceText.Text = $"{item.Price * (int)numberBox.Value}";
                 }
 
-                
+
             }
         }
-        
-        
+
+
         //Create account
         //--------------------------------------------------------
         public void CreateNewAccount()
@@ -713,7 +781,7 @@ namespace Zoo_tycoon
                     System.Windows.MessageBox.Show("Wrong username or password");
                 }
             }
-            
+
         }
         public void LogInAccountButton(object sender, EventArgs args)
         {
@@ -737,5 +805,22 @@ namespace Zoo_tycoon
             CreateCanvas.Visibility = Visibility.Collapsed;
         }
         //--------------------------------------------------------
+        public void LogOutQuestion(object sender, EventArgs args)
+        {
+            LogOutPanel.Visibility = Visibility.Visible;
+            LogOutButtonNo.Click += LogOutQuestionExit;
+            LogOutButtonYes.Click += LogOut;
+        }
+        public void LogOutQuestionExit(object sender, EventArgs args)
+        {
+            LogOutPanel.Visibility = Visibility.Collapsed;
+            LogOutButtonNo.Click -= LogOutQuestionExit;
+            LogOutButtonYes.Click -= LogOut;
+        }
+        public void LogOut(object sender, EventArgs args)
+        {
+            accountManagementCanvas.Visibility = Visibility.Visible;
+            LogInCanvas.Visibility = Visibility.Visible;
+        }
     }
 }
