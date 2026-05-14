@@ -504,36 +504,26 @@ namespace Zoo_tycoon
         public async void TimeLoop(object sender, EventArgs args)
         {
             DayTime += TimeSpan.FromMinutes(1);
-            TimeBlock.Text = $"{DayTime.Hours}:{DayTime.Minutes}";
+            
             if (DayTime.Hours >= 24)
-                DayTime = TimeSpan.FromHours(0);
+                DayTime = TimeSpan.Zero;
 
+            TimeBlock.Text = $"{DayTime.Hours:D2}:{DayTime.Minutes:D2}";
 
-            TimeBlock.Text = $"{DayTime.Hours}:{DayTime.Minutes}";
             if (DayTime.Hours >= 6 && DayTime.Hours < 18)
-            {
                 timeIcon.Source = new BitmapImage(new Uri("Images/MenuIcons/sun.png", UriKind.Relative));
-            }
             else
-            {
                 timeIcon.Source = new BitmapImage(new Uri($"Images/MenuIcons/moon.png", UriKind.Relative));
-            }
+ 
             if (DayTime.Hours >= 6 && DayTime.Hours < 10)
-            {
                 SunPos += 1100 / (4 * 60);
-            }
-            else if (DayTime.Hours >= 10 && DayTime.Hours > 18)
-            {
+            else if (DayTime.Hours >= 10 && DayTime.Hours < 18)
                 SunPos += 400 / (8 * 60);
-            }
             else if (DayTime.Hours >= 18 && DayTime.Hours < 21)
-            {
                 SunPos += 830 / (3 * 60);
-            }
             else
-            {
                 SunPos += 600 / (9 * 60);
-            }
+            
             if (SunPos >= 830)
             {
                 SunPos = -2100;
@@ -639,7 +629,7 @@ namespace Zoo_tycoon
                 
             }
         }
-        
+
         
         //Create account
         //--------------------------------------------------------
