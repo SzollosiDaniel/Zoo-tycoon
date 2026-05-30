@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -85,7 +86,7 @@ namespace Zoo_tycoon
             gameLoop.Tick += GameLoop;
             gameLoop.Start();
 
-            user.Money = 500;
+            user.Money = 1000000000;
 
             accountManagementCanvas.Visibility = Visibility.Visible;
             CreateAccountText.MouseUp += SwitchToCreateAccount;
@@ -252,6 +253,12 @@ namespace Zoo_tycoon
             {
                 MainGameCanvas.Children.Remove(border);
                 MainGameCanvas.Children.Remove(deaths.Find(x => x.Name == $"index{PlacedAnimals.IndexOf(animal)}"));
+                if (animal.Health == 0)
+                    deaths.RemoveAt(deaths.FindIndex(x => x.Name == $"index{PlacedAnimals.IndexOf(animal)}"));
+                
+                
+                isStatsOn.Item1 = false;
+                isStatsOn.Item2 = null;
                 user.Money += animal.SellPrice;
                 animal.Active = false;
                 MoneyText.Text = $"{user.Money}$";
@@ -294,6 +301,52 @@ namespace Zoo_tycoon
             ProgressBar relationBar = new ProgressBar() { Height = 25, Width = 350, Value = animal.Relationship, Margin = new Thickness(20, 10, 0, 0), VerticalAlignment = VerticalAlignment.Top, HorizontalAlignment = HorizontalAlignment.Left, BorderThickness = new Thickness(2), Foreground = Brushes.Red, Background = Brushes.Transparent };
             statsPanel.Children.Add(relationText);
             statsPanel.Children.Add(relationBar);
+
+            List<DockPanel> Dockpanels = new List<DockPanel>();
+
+            for (double i = 0; i < items.Count; i++)
+            {
+                if (i % 3 == 0 || i == 0)
+                {
+                    DockPanel dockPanel = new DockPanel() { Height = 150, Width = 350, VerticalAlignment = VerticalAlignment.Top, Name = "Dockpanel" + Math.Floor(i / 3) };
+                    Grid.SetRow(dockPanel, 2);
+                    Grid.SetColumnSpan(dockPanel, 3);
+                    statsPanel.Children.Add(dockPanel);
+                    Dockpanels.Add(dockPanel);
+                }
+            }
+            int index = 0;
+            foreach (Item item in items)
+            {
+                if (item.Have > 0 && item.For.Contains(animal.Type))
+                {
+                    double temp = index / 3;
+                    Button button = new() { Width = 100, Height = 60, Background = Brushes.Green, BorderThickness = new Thickness(0, 0, 0, 0), Content = $"{item.Name} {item.Have}" };
+                    button.Click += UseItem;
+                    Dockpanels.Find(a => a.Name == $"Dockpanel{Math.Floor(temp)}").Children.Add(button);
+                    index++;
+                }
+            }
+
+        }
+        public void UseItem(object sender, EventArgs args)
+        {
+            Button button = sender as Button;
+            Item item = items.Find(x => x.Name == button.Content.ToString().Split(' ')[0]);
+            item.Have--;
+            isStatsOn.Item2.Health += item.Heal;
+            if (isStatsOn.Item2.Health > 100)
+                isStatsOn.Item2.Health = 100;
+            
+            isStatsOn.Item2.Hunger += item.Feed;
+            if (isStatsOn.Item2.Hunger > 100)
+                isStatsOn.Item2.Hunger = 100;
+
+            isStatsOn.Item2.Relationship += item.Relationship;
+            if (isStatsOn.Item2.Relationship > 100)
+                isStatsOn.Item2.Relationship = 100;
+
+            ShowAnimalStats(isStatsOn.Item2);
         }
         //--------------------------------------------------------
 
@@ -609,7 +662,6 @@ namespace Zoo_tycoon
             }
             foreach (Animals item in HashAnimals)
             {
-                bool yesOrNo = true;
                 item.Hunger -= 2;
                 if (item.Hunger <= 50 && item.Hunger > 25) item.Health -= 2;
                 else if (item.Hunger <= 25 && item.Hunger > 10) {
@@ -621,17 +673,9 @@ namespace Zoo_tycoon
 
                 if (item.Health <= 0)
                 {
-                    
                     item.Active = false;
                     item.Health = 0;
-                    foreach (TextBlock yes in deaths)
-                    {
-                        if (yes.Name == $"index{PlacedAnimals.IndexOf(item)}")
-                        {
-                            yesOrNo = false;
-                        }
-                    }
-                    if (yesOrNo)
+                    if (deaths.Find(x => x.Name == $"index{PlacedAnimals.IndexOf(item)}") == null)
                     {
                         TextBlock death = new TextBlock() { Text = "X", FontSize = 60, TextAlignment = TextAlignment.Center, Background = Brushes.Black, Foreground = Brushes.Red, Name = $"index{PlacedAnimals.IndexOf(item)}", Opacity = 0.5, Width = MouseTrackingRectangle.Width + 5, Height = MouseTrackingRectangle.Height + 5, IsHitTestVisible = false };
                         MainGameCanvas.Children.Add(death);
@@ -710,7 +754,6 @@ namespace Zoo_tycoon
 
             }
         }
-
 
         //Create account
         //--------------------------------------------------------

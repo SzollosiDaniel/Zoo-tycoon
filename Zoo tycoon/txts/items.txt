@@ -1,3 +1,4 @@
 Name;For(,);Heal;Feed;Relationship;Price
 Medkit;Monkey,Bird,Crocodile;60;0;20;600
 Seed;Bird;5;20;10;300
+Banana;Monkey;10;30;20;200
